@@ -41,5 +41,11 @@
     <ClInclude Include="libs\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="libs\interval.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -130,10 +130,12 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="libs\camera.h" />
     <ClInclude Include="libs\color.h" />
     <ClInclude Include="libs\common.h" />
     <ClInclude Include="libs\hittable.h" />
     <ClInclude Include="libs\hittable_list.h" />
+    <ClInclude Include="libs\interval.h" />
     <ClInclude Include="libs\ray.h" />
     <ClInclude Include="libs\sphere.h" />
     <ClInclude Include="libs\vec3.h" />

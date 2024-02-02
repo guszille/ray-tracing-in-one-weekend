@@ -7,7 +7,7 @@ class sphere : public hittable
 public:
 	sphere(point3 _center, double _radius) : center(_center), radius(_radius) {}
 
-    bool hit(const ray& r, double ray_tmin, double ray_tmax, hit_record& rec) const override
+    bool hit(const ray& r, interval ray_ti, hit_record& rec) const override
     {
         vec3 oc = r.get_origin() - center;
 
@@ -23,11 +23,11 @@ public:
         // Find the nearest root that lies in the acceptable range.
         double root = (-half_b - sqrtd) / a;
 
-        if (root <= ray_tmin || ray_tmax <= root)
+        if (!ray_ti.surrounds(root))
         {
             root = (-half_b + sqrtd) / a;
 
-            if (root <= ray_tmin || ray_tmax <= root)
+            if (!ray_ti.surrounds(root))
             {
                 return false;
             }
