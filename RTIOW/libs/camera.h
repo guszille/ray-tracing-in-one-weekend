@@ -10,6 +10,7 @@ public:
 	double aspect_ratio = 1.0; // Ratio of image, width over height.
 	int image_width = 100; // Rendered image width in pixel count.
 	int samples_per_pixel = 10; // Count of random samples for each pixel.
+	int max_depth = 10; // Maximum number of ray bounces into scene.
 
 	void render(const hittable& world, std::ofstream& output_file)
 	{
@@ -28,7 +29,7 @@ public:
 				for (int sample = 0; sample < samples_per_pixel; ++sample)
 				{
 					ray r = get_ray(i, j);
-					pixel_color += get_ray_color(r, world);
+					pixel_color += get_ray_color(r, max_depth, world);
 				}
 
 				write_color(output_file, pixel_color, samples_per_pixel);
@@ -92,13 +93,22 @@ private:
 		return (px * pixel_delta_u) + (py * pixel_delta_v);
 	}
 
-	color get_ray_color(const ray& r, const hittable& world) const
+	color get_ray_color(const ray& r, int depth, const hittable& world) const
 	{
 		hit_record rec;
 
-		if (world.hit(r, interval(0.0, infinity), rec))
+		// If we've exceeded the ray bounce limit, no more light is gathered.
+		if (depth <= 0)
 		{
-			return 0.5 * (rec.normal + color(1.0, 1.0, 1.0));
+			return color(0.0, 0.0, 0.0);
+		}
+
+		// Using "0.001" as the minimum value to avoid shadow acne.
+		if (world.hit(r, interval(0.001, infinity), rec))
+		{
+			vec3 direction = rec.normal + random_unit_vector();
+
+			return 0.5 * get_ray_color(ray(rec.p, direction), depth - 1, world);
 		}
 
 		vec3 unit_direction = unit_vector(r.get_direction());
