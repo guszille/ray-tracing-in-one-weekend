@@ -136,6 +136,7 @@
     <ClInclude Include="libs\hittable.h" />
     <ClInclude Include="libs\hittable_list.h" />
     <ClInclude Include="libs\interval.h" />
+    <ClInclude Include="libs\material.h" />
     <ClInclude Include="libs\ray.h" />
     <ClInclude Include="libs\sphere.h" />
     <ClInclude Include="libs\vec3.h" />

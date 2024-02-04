@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-#include "common.h"
+#include "vec3.h"
 
 using color = vec3;
 

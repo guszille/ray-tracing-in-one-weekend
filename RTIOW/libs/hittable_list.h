@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 
+#include "common.h"
+
 #include "hittable.h"
 
 class hittable_list : public hittable
