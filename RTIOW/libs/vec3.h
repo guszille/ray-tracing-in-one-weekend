@@ -129,9 +129,22 @@ inline vec3 random_in_unit_sphere()
 {
     while (true)
     {
-        vec3 p = vec3::random(-1, 1);
+        vec3 p = vec3::random(-1.0, 1.0);
 
-        if (p.length_squared() < 1)
+        if (p.length_squared() < 1.0)
+        {
+            return p;
+        }
+    }
+}
+
+inline vec3 random_in_unit_disk()
+{
+    while (true)
+    {
+        vec3 p = vec3(random_double(-1.0, 1.0), random_double(-1.0, 1.0), 0.0);
+
+        if (p.length_squared() < 1.0)
         {
             return p;
         }
