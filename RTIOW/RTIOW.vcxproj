@@ -139,6 +139,7 @@
     <ClInclude Include="libs\material.h" />
     <ClInclude Include="libs\ray.h" />
     <ClInclude Include="libs\sphere.h" />
+    <ClInclude Include="libs\thread_pool.h" />
     <ClInclude Include="libs\vec3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

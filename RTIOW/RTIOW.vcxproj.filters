@@ -50,5 +50,8 @@
     <ClInclude Include="libs\material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="libs\thread_pool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

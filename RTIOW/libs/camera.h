@@ -5,6 +5,9 @@
 #include "color.h"
 #include "hittable.h"
 #include "material.h"
+#include "thread_pool.h"
+
+#include "external/stbi/stb_image_write.h"
 
 class camera
 {
@@ -47,6 +50,40 @@ public:
 		}
 
 		std::clog << '\r' << "Done." << "                " << std::endl;
+	}
+
+	void render(const hittable& world, const char* filename)
+	{
+		initialize();
+
+		unsigned char* buffer = new unsigned char[image_height * image_width * 3];
+		uint32_t completed_tasks = 0;
+		thread_pool tp;
+
+		for (int j = 0; j < image_height; ++j)
+		{
+			for (int i = 0; i < image_width; ++i)
+			{
+				tp.enqueue([&, i, j] {
+					int stride = (j * image_width + i) * 3;
+					color pixel_color(0.0, 0.0, 0.0);
+
+					for (int sample = 0; sample < samples_per_pixel; ++sample)
+					{
+						ray r = get_ray(i, j);
+						pixel_color += get_ray_color(r, max_depth, world);
+					}
+
+					write_color(buffer, stride, pixel_color, samples_per_pixel);
+				});
+			}
+		}
+
+		tp.terminate();
+
+		stbi_write_jpg(filename, image_width, image_height, 3, buffer, 100);
+
+		delete[] buffer;
 	}
 
 private:

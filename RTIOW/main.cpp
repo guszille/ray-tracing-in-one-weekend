@@ -1,5 +1,9 @@
 // Ray Tracing In One Weekend, by Gustavo Zille.
 
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "libs/common.h"
 
 #include "libs/color.h"
@@ -74,10 +78,10 @@ int main()
 
     cam.aspect_ratio = 16.0 / 9.0;
     cam.image_width = 1280;
-    cam.samples_per_pixel = 16;
+    cam.samples_per_pixel = 150;
     cam.max_depth = 50;
 
-    cam.vfov = 30.0;
+    cam.vfov = 20.0;
     cam.lookfrom = point3(13.0, 2.0, 3.0);
     cam.lookat = point3(0.0, 0.0, 0.0);
     cam.vup = vec3(0.0, 1.0, 0.0);
@@ -85,7 +89,7 @@ int main()
     cam.defocus_angle = 0.6;
     cam.focus_distance = 10.0;
 
-    cam.render(world, image_file);
+    cam.render(world, "outputs/image.jpg");
 
     image_file.close();
 
