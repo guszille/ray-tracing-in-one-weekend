@@ -25,19 +25,21 @@ public:
 	double defocus_angle = 0; // Variation angle of rays through each pixel.
 	double focus_distance = 10; // Distance from camera lookfrom point to plane of perfect focus.
 
-	void render(const hittable& world, std::ofstream& output_file)
+	void render(const hittable& world, const char* output_filename)
 	{
 		initialize();
 
-		output_file << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+		unsigned char* buffer = new unsigned char[image_height * image_width * 3];
+		double pixel_samples_scale = 1.0 / samples_per_pixel;
 
 		for (int j = 0; j < image_height; ++j)
 		{
-			std::clog << '\r' << "Lines remaining: " << (image_height - j) << ' ' << std::flush;
+			std::clog << '\r' << "Lines remaining: " << (image_height - j) << '.' << std::flush;
 
 			for (int i = 0; i < image_width; ++i)
 			{
 				color pixel_color(0.0, 0.0, 0.0);
+				int stride = (j * image_width + i) * 3;
 
 				for (int sample = 0; sample < samples_per_pixel; ++sample)
 				{
@@ -45,18 +47,24 @@ public:
 					pixel_color += get_ray_color(r, max_depth, world);
 				}
 
-				write_color(output_file, pixel_color, samples_per_pixel);
+				write_color_into_buffer(buffer, stride, pixel_samples_scale * pixel_color);
 			}
 		}
 
-		std::clog << '\r' << "Done." << "                " << std::endl;
+		std::clog << '\n' << "Done!" << std::endl;
+
+		stbi_write_jpg(output_filename, image_width, image_height, 3, buffer, 100);
+
+		delete[] buffer;
 	}
 
-	void render(const hittable& world, const char* filename)
+	// Rendering with multirhreading.
+	void render_mt(const hittable& world, const char* output_filename)
 	{
 		initialize();
 
 		unsigned char* buffer = new unsigned char[image_height * image_width * 3];
+		double pixel_samples_scale = 1.0 / samples_per_pixel;
 		uint32_t completed_tasks = 0;
 		thread_pool tp;
 
@@ -65,8 +73,8 @@ public:
 			for (int i = 0; i < image_width; ++i)
 			{
 				tp.enqueue([&, i, j] {
-					int stride = (j * image_width + i) * 3;
 					color pixel_color(0.0, 0.0, 0.0);
+					int stride = (j * image_width + i) * 3;
 
 					for (int sample = 0; sample < samples_per_pixel; ++sample)
 					{
@@ -74,14 +82,14 @@ public:
 						pixel_color += get_ray_color(r, max_depth, world);
 					}
 
-					write_color(buffer, stride, pixel_color, samples_per_pixel);
+					write_color_into_buffer(buffer, stride, pixel_samples_scale * pixel_color);
 				});
 			}
 		}
 
 		tp.terminate();
 
-		stbi_write_jpg(filename, image_width, image_height, 3, buffer, 100);
+		stbi_write_jpg(output_filename, image_width, image_height, 3, buffer, 100);
 
 		delete[] buffer;
 	}
@@ -138,22 +146,21 @@ private:
 		// Get a randomly sampled camera ray for the pixel at location (i, j), originating
 		// from the camera defocus disk.
 
-		point3 pixel_center = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
-		point3 pixel_sample = pixel_center + pixel_sample_square();
+		point3 pixel_offset = square_sample();
+		point3 pixel_sample = pixel00_loc
+							+ ((i + pixel_offset.x()) * pixel_delta_u)
+							+ ((j + pixel_offset.y()) * pixel_delta_v);
 
-		point3 ray_origin = (defocus_angle <= 0.0) ? center : defocus_disk_sample();;
+		point3 ray_origin = (defocus_angle <= 0.0) ? center : defocus_disk_sample();
 		vec3 ray_direction = pixel_sample - ray_origin;
 
 		return ray(ray_origin, ray_direction);
 	}
 
-	vec3 pixel_sample_square() const
+	vec3 square_sample() const
 	{
-		double px = -0.5 + random_double();
-		double py = -0.5 + random_double();
-
-		// Returns a random point in the square surrounding a pixel at the origin.
-		return (px * pixel_delta_u) + (py * pixel_delta_v);
+		// Returns the vector to a random point in the [-0.5,-0.5]-[+0.5,+0.5] unit square.
+		return vec3(random_double() - 0.5, random_double() - 0.5, 0);
 	}
 
 	point3 defocus_disk_sample() const

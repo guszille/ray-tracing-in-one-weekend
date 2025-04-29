@@ -60,6 +60,7 @@ private:
 					condition.wait(lock, [this] { return stop || !tasks.empty(); });
 					if (stop && tasks.empty()) { return; }
 
+					// Retrieve a task from the queue.
 					auto task = std::move(tasks.front());
 					tasks.pop();
 					num_dispatched_tasks++;
@@ -68,7 +69,8 @@ private:
 
 					lock.unlock();
 
-					task(); // Execute the task.
+					// Execute the task.
+					task();
 				}
 			});
 		}

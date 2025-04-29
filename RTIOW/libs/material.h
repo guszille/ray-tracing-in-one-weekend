@@ -47,9 +47,10 @@ public:
     bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override
     {
         vec3 reflected = reflect(unit_vector(r_in.get_direction()), rec.normal);
+        vec3 scatter_direction = reflected + fuzz * random_unit_vector();
 
         attenuation = albedo;
-        scattered = ray(rec.p, reflected + fuzz * random_unit_vector());
+        scattered = ray(rec.p, scatter_direction);
 
         return dot(scattered.get_direction(), rec.normal) > 0;
     }
@@ -62,16 +63,16 @@ private:
 class dielectric : public material
 {
 public:
-    dielectric(double index_of_refraction) : ir(index_of_refraction) {}
+    dielectric(double _refraction_index) : refraction_index(_refraction_index) {}
 
     bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override
     {
+        vec3 scatter_direction;
         vec3 unit_direction = unit_vector(r_in.get_direction());
-        vec3 direction;
 
-        double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
-        double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
-        double refraction_ratio = rec.front_face ? (1.0 / ir) : ir;
+        double refraction_ratio = rec.front_face ? (1.0 / refraction_index) : refraction_index;
+        double cos_theta = std::fmin(dot(-unit_direction, rec.normal), 1.0);
+        double sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
 
         bool cannot_refract = false;
         cannot_refract |= refraction_ratio * sin_theta > 1.0;
@@ -79,28 +80,28 @@ public:
 
         if (cannot_refract)
         {
-            direction = reflect(unit_direction, rec.normal);
+            scatter_direction = reflect(unit_direction, rec.normal);
         }
         else
         {
-            direction = refract(unit_direction, rec.normal, refraction_ratio);
+            scatter_direction = refract(unit_direction, rec.normal, refraction_ratio);
         }
 
         attenuation = color(1.0, 1.0, 1.0);
-        scattered = ray(rec.p, direction);
+        scattered = ray(rec.p, scatter_direction);
 
         return true;
     }
 
 private:
-    double ir; // Index of refraction.
+    double refraction_index;
 
-    static double reflectance(double cosine, double ref_idx)
+    static double reflectance(double cosine, double refraction_index)
     {
         // Use Schlick's approximation for reflectance.
-        double r0 = (1 - ref_idx) / (1 + ref_idx);
+        double r0 = (1 - refraction_index) / (1 + refraction_index);
         r0 = r0 * r0;
 
-        return r0 + (1 - r0) * pow((1 - cosine), 5);
+        return r0 + (1 - r0) * std::pow((1 - cosine), 5);
     }
 };

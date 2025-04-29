@@ -2,7 +2,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS // FIXME.
 
 #include "libs/common.h"
 
@@ -15,11 +15,6 @@
 
 int main()
 {
-    // Image (output).
-    std::ofstream image_file;
-
-    image_file.open("outputs/image.ppm");
-
     // World.
     hittable_list world;
 
@@ -78,8 +73,8 @@ int main()
 
     cam.aspect_ratio = 16.0 / 9.0;
     cam.image_width = 1280;
-    cam.samples_per_pixel = 150;
-    cam.max_depth = 50;
+    cam.samples_per_pixel = 10;
+    cam.max_depth = 20;
 
     cam.vfov = 20.0;
     cam.lookfrom = point3(13.0, 2.0, 3.0);
@@ -89,9 +84,7 @@ int main()
     cam.defocus_angle = 0.6;
     cam.focus_distance = 10.0;
 
-    cam.render(world, "outputs/image.jpg");
-
-    image_file.close();
+    cam.render_mt(world, "outputs/book1/image.jpg");
 
 	return 0;
 }

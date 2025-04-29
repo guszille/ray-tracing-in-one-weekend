@@ -8,20 +8,14 @@ using color = vec3;
 
 inline double linear_to_gamma(double linear_component)
 {
-    return sqrt(linear_component);
+    return (linear_component > 0) ? std::sqrt(linear_component) : 0.0;
 }
 
-void write_color(std::ofstream& output_file, color pixel_color, int samples_per_pixel)
+void write_color_into_file(std::ofstream& output_file, color pixel_color)
 {
     double r = pixel_color.x();
     double g = pixel_color.y();
     double b = pixel_color.z();
-
-    // Divide the color by the number of samples.
-    auto scale = 1.0 / samples_per_pixel;
-    r *= scale;
-    g *= scale;
-    b *= scale;
 
     // Apply the linear to gamma transform.
     r = linear_to_gamma(r);
@@ -35,17 +29,11 @@ void write_color(std::ofstream& output_file, color pixel_color, int samples_per_
                 << static_cast<int>(256 * intensity.clamp(b)) << '\n';
 }
 
-void write_color(unsigned char* buffer, int stride, color pixel_color, int samples_per_pixel)
+void write_color_into_buffer(unsigned char* buffer, int stride, color pixel_color)
 {
     double r = pixel_color.x();
     double g = pixel_color.y();
     double b = pixel_color.z();
-
-    // Divide the color by the number of samples.
-    auto scale = 1.0 / samples_per_pixel;
-    r *= scale;
-    g *= scale;
-    b *= scale;
 
     // Apply the linear to gamma transform.
     r = linear_to_gamma(r);
