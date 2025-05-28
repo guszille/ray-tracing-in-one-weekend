@@ -34,7 +34,7 @@ public:
 
 		for (int j = 0; j < image_height; ++j)
 		{
-			std::clog << '\r' << "Lines remaining: " << (image_height - j) << '.' << std::flush;
+			std::clog << '\r' << "Lines remaining: " << (image_height - j) << '.' << "    " << std::flush;
 
 			for (int i = 0; i < image_width; ++i)
 			{
@@ -153,8 +153,9 @@ private:
 
 		point3 ray_origin = (defocus_angle <= 0.0) ? center : defocus_disk_sample();
 		vec3 ray_direction = pixel_sample - ray_origin;
+		double ray_time = random_double();
 
-		return ray(ray_origin, ray_direction);
+		return ray(ray_origin, ray_direction, ray_time);
 	}
 
 	vec3 square_sample() const

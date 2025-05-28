@@ -15,6 +15,8 @@
 
 int main()
 {
+	// std::srand(std::time(NULL));
+
 	// World.
 	hittable_list world;
 
@@ -35,10 +37,11 @@ int main()
 				if (choose_material < 0.8)
 				{
 					auto albedo = color::random() * color::random();
+					auto secondary_center = center + vec3(0.0, random_double(0.0, 0.5), 0.0);
 
 					// Diffuse.
 					sphere_material = std::make_shared<lambertian>(albedo);
-					world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+					world.add(std::make_shared<sphere>(center, secondary_center, 0.2, sphere_material));
 				}
 				else if (choose_material < 0.95)
 				{
@@ -72,8 +75,8 @@ int main()
 	camera cam;
 
 	cam.aspect_ratio = 16.0 / 9.0;
-	cam.image_width = 1280;
-	cam.samples_per_pixel = 32;
+	cam.image_width = 400;
+	cam.samples_per_pixel = 100;
 	cam.max_depth = 50;
 
 	cam.vfov = 20.0;
@@ -84,7 +87,7 @@ int main()
 	cam.defocus_angle = 0.6;
 	cam.focus_distance = 10.0;
 
-	cam.render_mt(world, "outputs/book1/image.jpg");
+	cam.render_mt(world, "outputs/book2/image.jpg");
 
 	return 0;
 }

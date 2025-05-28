@@ -30,7 +30,7 @@ public:
 		}
 
 		attenuation = albedo;
-		scattered = ray(rec.p, scatter_direction);
+		scattered = ray(rec.p, scatter_direction, r_in.get_time());
 
 		return true;
 	}
@@ -50,7 +50,7 @@ public:
 		vec3 scatter_direction = reflected + (fuzz * random_unit_vector());
 
 		attenuation = albedo;
-		scattered = ray(rec.p, scatter_direction);
+		scattered = ray(rec.p, scatter_direction, r_in.get_time());
 
 		return dot(scattered.get_direction(), rec.normal) > 0;
 	}
@@ -88,7 +88,7 @@ public:
 		}
 
 		attenuation = color(1.0, 1.0, 1.0);
-		scattered = ray(rec.p, scatter_direction);
+		scattered = ray(rec.p, scatter_direction, r_in.get_time());
 
 		return true;
 	}

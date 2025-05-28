@@ -1,6 +1,6 @@
 # Ray Tracing
 
-Building a path tracing running on CPU, using C++. This project is being developed following the guidelines of the [_Ray Tracing Series_](https://raytracing.github.io) books.
+Building a path tracer running on CPU, using C++. This project is being developed following the guidelines of the [_Ray Tracing Series_](https://raytracing.github.io) books.
 
 ## 1st Book, [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
 
@@ -12,7 +12,7 @@ Covered:
 - Refraction; and
 - Defocus Blur.
 
-Extra:
+Extras:
 - Multithreaded rendering.
 
 <br />
