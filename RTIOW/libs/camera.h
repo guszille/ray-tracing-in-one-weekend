@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common.h"
-
 #include "color.h"
 #include "hittable.h"
 #include "material.h"
@@ -65,7 +64,6 @@ public:
 
 		unsigned char* buffer = new unsigned char[image_height * image_width * 3];
 		double pixel_samples_scale = 1.0 / samples_per_pixel;
-		uint32_t completed_tasks = 0;
 		thread_pool tp;
 
 		for (int j = 0; j < image_height; ++j)

@@ -62,6 +62,7 @@ private:
 
 					// Retrieve a task from the queue.
 					auto task = std::move(tasks.front());
+
 					tasks.pop();
 					num_dispatched_tasks++;
 

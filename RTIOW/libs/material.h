@@ -1,8 +1,8 @@
 #pragma once
 
 #include "common.h"
-
 #include "hittable_list.h"
+#include "texture.h"
 
 class hit_record;
 
@@ -17,7 +17,8 @@ public:
 class lambertian : public material
 {
 public:
-	lambertian(const color& _albedo) : albedo(_albedo) {}
+	lambertian(const color& _albedo) : tex(std::make_shared<solid_color>(_albedo)) {}
+	lambertian(std::shared_ptr<texture> _tex) : tex(_tex) {}
 
 	bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override
 	{
@@ -29,14 +30,14 @@ public:
 			scatter_direction = rec.normal;
 		}
 
-		attenuation = albedo;
+		attenuation = tex->value(rec.u, rec.v, rec.p);
 		scattered = ray(rec.p, scatter_direction, r_in.get_time());
 
 		return true;
 	}
 
 private:
-	color albedo;
+	std::shared_ptr<texture> tex;
 };
 
 class metal : public material

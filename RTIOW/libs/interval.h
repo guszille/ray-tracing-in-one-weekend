@@ -9,6 +9,18 @@ public:
 
 	interval(double _min, double _max) : min(_min), max(_max) {}
 
+	interval(const interval& a, const interval& b)
+	{
+		// Create the interval tightly enclosing the two input intervals.
+		min = a.min <= b.min ? a.min : b.min;
+		max = a.max >= b.max ? a.max : b.max;
+	}
+
+	double size() const
+	{
+		return max - min;
+	}
+
 	bool contains(double x) const
 	{
 		return min <= x && x <= max;
@@ -27,8 +39,15 @@ public:
 		return x;
 	}
 
+	interval expand(double delta) const
+	{
+		double padding = delta / 2;
+
+		return interval(min - padding, max + padding);
+	}
+
 	static const interval empty, universe;
 };
 
-const static interval empty(+infinity, -infinity);
-const static interval universe(-infinity, +infinity);
+const interval interval::empty(+infinity, -infinity);
+const interval interval::universe(-infinity, +infinity);

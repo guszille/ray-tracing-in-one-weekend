@@ -130,6 +130,8 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="libs\aabb.h" />
+    <ClInclude Include="libs\bvh.h" />
     <ClInclude Include="libs\camera.h" />
     <ClInclude Include="libs\color.h" />
     <ClInclude Include="libs\common.h" />
@@ -138,7 +140,9 @@
     <ClInclude Include="libs\interval.h" />
     <ClInclude Include="libs\material.h" />
     <ClInclude Include="libs\ray.h" />
+    <ClInclude Include="libs\rtiow_image.h" />
     <ClInclude Include="libs\sphere.h" />
+    <ClInclude Include="libs\texture.h" />
     <ClInclude Include="libs\thread_pool.h" />
     <ClInclude Include="libs\vec3.h" />
   </ItemGroup>

@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "common.h"
-
 #include "hittable.h"
+#include "aabb.h"
 
 class hittable_list : public hittable
 {
@@ -23,6 +23,8 @@ public:
 	void add(std::shared_ptr<hittable> object)
 	{
 		objects.push_back(object);
+
+		bbox = aabb(bbox, object->get_bounding_box());
 	}
 
 	bool hit(const ray& r, interval ray_ti, hit_record& rec) const override
@@ -43,4 +45,9 @@ public:
 
 		return hit_anything;
 	}
+
+	aabb get_bounding_box() const override { return bbox; }
+
+private:
+	aabb bbox;
 };
